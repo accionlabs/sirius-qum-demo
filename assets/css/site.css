@@ -203,8 +203,10 @@ table.plain tr:last-child td { border-bottom: none; }
 }
 .report-embed.fullscreen {
   position: fixed; inset: 0; z-index: 200; border-radius: 0;
+  margin: 0; border: 0;
+  display: flex; flex-direction: column;
 }
-.report-embed.fullscreen iframe { height: calc(100vh - 52px); }
+.report-embed.fullscreen iframe { flex: 1; height: auto; }
 .embed-warning {
   background: rgba(255,200,87,0.1);
   border: 1px solid rgba(255,200,87,0.35);
