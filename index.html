@@ -282,17 +282,69 @@
     </p>
 
     <div class="cta-row">
-      <a class="btn btn-primary" href="report/quantitative-user-metrics/index.html" target="_blank" rel="noopener">Open in new tab &rarr;</a>
+      <a class="btn btn-primary" href="report/quantitative-user-metrics/index.html" target="_blank" rel="noopener">Open the report in a new tab &rarr;</a>
       <a class="btn btn-ghost" href="report/20260415_123025/report/index.html" target="_blank" rel="noopener">Open Nexial execution log</a>
     </div>
 
-    <div class="report-embed">
+    <div class="embed-warning">
+      <span class="icon">&#9432;</span>
+      <div>
+        <strong>Heads up &mdash; the report is best used full-screen.</strong>
+        When you click <em>See Details</em> on any metric below, the view
+        swaps in place inside the embed &mdash; if nothing seems to happen,
+        scroll <em>inside</em> the embedded frame. For the best experience,
+        <a href="report/quantitative-user-metrics/index.html" target="_blank" rel="noopener">open the report in a new tab</a>
+        or use the full-screen toggle.
+      </div>
+    </div>
+
+    <div class="report-embed" id="reportEmbed">
       <div class="report-embed-header">
         <span>QUM Report &mdash; embedded view &middot; run <code>20260415_123025</code></span>
-        <span>Powered by <a href="https://nexiality.github.io/documentation/" target="_blank" rel="noopener">Nexial</a></span>
+        <span>
+          <button class="fs-toggle" id="fsToggle" type="button">Full screen</button>
+          &nbsp;Powered by <a href="https://nexiality.github.io/documentation/" target="_blank" rel="noopener">Nexial</a>
+        </span>
       </div>
-      <iframe src="report/quantitative-user-metrics/index.html" title="QUM Report" loading="lazy"></iframe>
+      <iframe id="reportFrame" src="report/quantitative-user-metrics/index.html" title="QUM Report" loading="lazy"></iframe>
     </div>
+
+    <script>
+      (function () {
+        var embed = document.getElementById('reportEmbed');
+        var frame = document.getElementById('reportFrame');
+        var fsBtn = document.getElementById('fsToggle');
+        function setFullscreen(on) {
+          embed.classList.toggle('fullscreen', on);
+          fsBtn.textContent = on ? 'Exit full screen' : 'Full screen';
+          document.body.style.overflow = on ? 'hidden' : '';
+        }
+        fsBtn.addEventListener('click', function () {
+          setFullscreen(!embed.classList.contains('fullscreen'));
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && embed.classList.contains('fullscreen')) setFullscreen(false);
+        });
+        // When the user clicks anything inside the embedded SPA, scroll the embed into view
+        // so the drilled-down content is actually visible after See Details is pressed.
+        function attachFrameListeners() {
+          try {
+            var doc = frame.contentDocument;
+            if (!doc) return;
+            doc.addEventListener('click', function () {
+              setTimeout(function () {
+                if (!embed.classList.contains('fullscreen')) {
+                  embed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // Also scroll the iframe itself to its top so the new view is visible
+                try { frame.contentWindow.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) {}
+              }, 150);
+            }, true);
+          } catch (err) { /* cross-origin or not ready */ }
+        }
+        frame.addEventListener('load', attachFrameListeners);
+      })();
+    </script>
   </section>
 
   <section class="section">
